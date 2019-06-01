@@ -103,6 +103,27 @@ prompt_pure_preexec() {
 	export VIRTUAL_ENV_DISABLE_PROMPT=${VIRTUAL_ENV_DISABLE_PROMPT:-12}
 }
 
+prompt_pure_chpwd() {
+	# Compute fishlike path for prompt.
+	local path=${PWD/#$HOME/\~}
+	local path_components=(${(@s:/:)path})
+	if [[ $#path_components -lt 2 ]]; then
+		# Handle case where path has only one component (e.g. ~, /)
+		typeset -g prompt_pure_path=$path
+		return
+	fi
+
+	# Compute shrinked path like in fishshell (e.g. ~/foo/bar -> ~/f/bar)
+	local shrinked_path=
+	for component in ${path_components:0:$#path_components-1}; do
+		case $component in
+		"~") shrinked_path+="~" ;;
+		*)   shrinked_path+="/${component:0:1}" ;;
+		esac
+	done
+	typeset -g prompt_pure_path="${shrinked_path}/${path_components[-1]}"
+}
+
 # Change the colors if their value are different from the current ones.
 prompt_pure_set_colors() {
 	local color_temp key value
@@ -540,6 +561,9 @@ prompt_pure_reset_vim_prompt_widget() {
 prompt_pure_state_setup() {
 	setopt localoptions noshwordsplit
 
+	# Set initial prompt.
+	prompt_pure_chpwd
+
 	# Check SSH_CONNECTION and the current state.
 	local ssh_connection=${SSH_CONNECTION:-$PROMPT_PURE_SSH_CONNECTION}
 	local username hostname
@@ -681,6 +705,7 @@ prompt_pure_setup() {
 
 	add-zsh-hook precmd prompt_pure_precmd
 	add-zsh-hook preexec prompt_pure_preexec
+	add-zsh-hook chpwd prompt_pure_chpwd
 
 	prompt_pure_state_setup
 
