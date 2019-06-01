@@ -646,7 +646,7 @@ prompt_pure_setup() {
 
 	if [[ -z $prompt_newline ]]; then
 		# This variable needs to be set, usually set by promptinit.
-		typeset -g prompt_newline=$'\n%{\r%}'
+		typeset -g prompt_newline=$'%666v'
 	fi
 
 	zmodload zsh/datetime
