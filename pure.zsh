@@ -155,11 +155,14 @@ prompt_pure_preprompt_render() {
 	# Add Git branch and dirty status info.
 	typeset -gA prompt_pure_vcs_info
 	if [[ -n $prompt_pure_vcs_info[branch] ]]; then
+		preprompt_parts+=('%F{white}(%f%')
 		preprompt_parts+=("%F{$git_color}"'${prompt_pure_vcs_info[branch]}${prompt_pure_git_dirty}%f')
 	fi
 	# Git pull/push arrows.
 	if [[ -n $prompt_pure_git_arrows ]]; then
-		preprompt_parts+=('%F{$prompt_pure_colors[git:arrow]}${prompt_pure_git_arrows}%f')
+		preprompt_parts+=('%F{$prompt_pure_colors[git:arrow]}${prompt_pure_git_arrows})%f')
+	elif [[ -n $prompt_pure_vcs_info[branch] ]]; then
+		preprompt_parts+=('%F{white})%f')
 	fi
 
 	# Username and machine, if applicable.
