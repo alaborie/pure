@@ -161,6 +161,7 @@ prompt_pure_preprompt_render() {
 	# Git branch and dirty status info.
 	typeset -gA prompt_pure_vcs_info
 	if [[ -n $prompt_pure_vcs_info[branch] ]]; then
+		preprompt_parts+=("%F{white}(%f%")
 		preprompt_parts+=("%F{$git_color}"'${prompt_pure_vcs_info[branch]}'"%F{$git_dirty_color}"'${prompt_pure_git_dirty}%f')
 	fi
 	# Git action (for example, merge).
@@ -170,6 +171,10 @@ prompt_pure_preprompt_render() {
 	# Git pull/push arrows.
 	if [[ -n $prompt_pure_git_arrows ]]; then
 		preprompt_parts+=('%F{$prompt_pure_colors[git:arrow]}${prompt_pure_git_arrows}%f')
+	fi
+	# Close parentheses around Git info.
+	if [[ -n $prompt_pure_vcs_info[branch] ]]; then
+		preprompt_parts+=("%F{white})%f")
 	fi
 	# Git stash symbol (if opted in).
 	if [[ -n $prompt_pure_git_stash ]]; then
